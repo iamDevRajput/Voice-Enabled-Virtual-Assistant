@@ -25,7 +25,12 @@ const app = express()
 
 // cors is use to connect frontend and backend
 app.use(cors({
-    origin: ["http://localhost:5173", "http://localhost:5174", "https://virtualassistant-03vg.onrender.com"], // kaha se req aa rha h
+    origin: [
+        process.env.FRONTEND_URL,
+        "http://localhost:5173", 
+        "http://localhost:5174", 
+        "https://virtualassistant-03vg.onrender.com"
+    ].filter(Boolean),
     credentials: true
 }))
 
