@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { CgMenuRight } from "react-icons/cg"
 import { RxCross1 } from "react-icons/rx"
+import { voiceService } from '../services/voice/voice.service'
 
 function Home() {
 
@@ -30,8 +31,6 @@ function Home() {
   const [isLoading, setIsLoading]       = useState(false)
   const convEndRef                      = useRef(null)
 
-  const synth = window.speechSynthesis
-
   /** Sync status state + ref so closures always see latest value */
   const updateStatus = (s) => {
     statusRef.current = s
@@ -46,7 +45,7 @@ function Home() {
   // ── handleLogOut ──────────────────────────────────────────────────────────
   const handleLogOut = async () => {
     // Stop any ongoing speech and recognition before logging out
-    synth.cancel()
+    voiceService.stop()
     isSpeakingRef.current = false
     try { recognitionRef.current?.stop() } catch (_) {}
 
@@ -62,8 +61,8 @@ function Home() {
 
   // ── startRecognition (improved to cancel active speech on click) ──────────
   const startRecognition = () => {
-    if (synth.speaking || isSpeakingRef.current) {
-      synth.cancel()
+    if (isSpeakingRef.current) {
+      voiceService.stop()
       isSpeakingRef.current = false
     }
     if (!isRecognizingRef.current) {
@@ -75,89 +74,28 @@ function Home() {
     }
   }
 
-  // ── Voice profile based on selected avatar image ──────────────────────────
-  const getVoiceForAvatar = (voices) => {
-    const imgUrl = userData?.assistantImage || ''
-
-    // Detect avatar by filename in the Cloudinary/backend URL
-    // image2 = gold male robot → prefer male voice
-    // image3 = armored blue robot → prefer male/neutral voice
-    // image1,4,5,6,7 = female androids → prefer female voice
-    const isMaleAvatar = imgUrl.includes('image2') || imgUrl.includes('image3')
-
-    if (isMaleAvatar) {
-      // Male voice priority: Google UK/US male, Microsoft David, any deeper male
-      return (
-        voices.find(v => v.name === 'Google UK English Male') ||
-        voices.find(v => v.name === 'Microsoft David - English (United States)') ||
-        voices.find(v => v.name.toLowerCase().includes('male') && v.lang.startsWith('en')) ||
-        voices.find(v => v.name === 'Daniel' && v.lang.startsWith('en')) ||  // macOS male
-        voices.find(v => v.lang === 'en-US') ||
-        voices.find(v => v.lang.startsWith('en'))
-      )
-    } else {
-      // Female voice priority: Google UK/US female, Microsoft Zira/Hazel/Sonia, Samantha (macOS)
-      return (
-        voices.find(v => v.name === 'Google UK English Female') ||
-        voices.find(v => v.name === 'Google US English') ||
-        voices.find(v => v.name === 'Samantha') ||                            // macOS default female
-        voices.find(v => v.name === 'Karen') ||                               // macOS Australian female
-        voices.find(v => v.name === 'Microsoft Zira - English (United States)') ||
-        voices.find(v => v.name === 'Microsoft Hazel Desktop - English (Great Britain)') ||
-        voices.find(v => v.name === 'Microsoft Sonia Online (Natural) - English (United Kingdom)') ||
-        voices.find(v => v.name.toLowerCase().includes('female') && v.lang.startsWith('en')) ||
-        voices.find(v => v.lang === 'en-IN') ||
-        voices.find(v => v.lang === 'en-GB') ||
-        voices.find(v => v.lang.startsWith('en'))
-      )
-    }
-  }
-
-  // ── speak — character-matched TTS voice ───────────────────────────────────
+  // ── speak — TTS voice orchestrator ───────────────────────────────────
   const speak = (text) => {
     if (!text) return
-    synth.cancel()
+    voiceService.stop()
 
-    const doSpeak = () => {
-      const utterance  = new SpeechSynthesisUtterance(text)
-      const voices     = window.speechSynthesis.getVoices()
-      const imgUrl     = userData?.assistantImage || ''
-      const isMale     = imgUrl.includes('image2') || imgUrl.includes('image3')
-
-      const voice = getVoiceForAvatar(voices)
-      if (voice) utterance.voice = voice
-      utterance.lang   = voice?.lang || 'en-US'
-      utterance.rate   = 0.92
-      utterance.pitch  = isMale ? 0.85 : 1.05   // slightly lower for male, slightly higher for female
-      utterance.volume = 1.0
-
-      isSpeakingRef.current = true
-      updateStatus('speaking')
-
-      utterance.onend = () => {
+    voiceService.speak(text, {
+      avatarImage: userData?.assistantImage,
+      onStart: () => {
+        isSpeakingRef.current = true
+        updateStatus('speaking')
+      },
+      onEnd: () => {
         isSpeakingRef.current = false
         updateStatus('ready')
         setTimeout(() => startRecognition(), 800)
-      }
-
-      utterance.onerror = (e) => {
-        console.warn('TTS error:', e.error)
+      },
+      onError: (e) => {
+        console.warn('TTS error:', e)
         isSpeakingRef.current = false
         updateStatus('ready')
       }
-
-      synth.speak(utterance)
-    }
-
-    const voices = window.speechSynthesis.getVoices()
-    if (voices.length > 0) {
-      doSpeak()
-    } else {
-      window.speechSynthesis.onvoiceschanged = () => {
-        window.speechSynthesis.onvoiceschanged = null
-        doSpeak()
-      }
-    }
+    })
   }
 
 
