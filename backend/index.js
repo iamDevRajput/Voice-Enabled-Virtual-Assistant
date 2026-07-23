@@ -25,12 +25,18 @@ const app = express()
 
 // cors is use to connect frontend and backend
 app.use(cors({
-    origin: [
-        process.env.FRONTEND_URL,
-        "http://localhost:5173", 
-        "http://localhost:5174", 
-        "https://virtualassistant-03vg.onrender.com"
-    ].filter(Boolean),
+    origin: function (origin, callback) {
+        const allowedOrigins = [
+            process.env.FRONTEND_URL,
+            "https://virtualassistant-03vg.onrender.com"
+        ];
+        // Allow any localhost port or specific allowed origins
+        if (!origin || /^http:\/\/localhost:\d+$/.test(origin) || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     credentials: true
 }))
 
