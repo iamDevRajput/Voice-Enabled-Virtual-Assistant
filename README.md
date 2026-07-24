@@ -1,10 +1,4 @@
-# 🎙️ Voice-Enabled Virtual Assistant (MERN + Gemini)
-
-## 💻 GitHub Repository  
-**Code:** [https://github.com/CodePandaAkhilesh/virtualAssistant](https://github.com/CodePandaAkhilesh/virtualAssistant)  
-**Live Demo:** https://virtualassistant-03vg.onrender.com
-
----
+# 🎙️ Voice-Enabled Virtual Assistant (MERN + Gemini)-
 
 ## 🚀 Problem Statement  
 Users want a **personalized, voice-enabled AI assistant** that can understand natural language commands and respond instantly.  
@@ -196,11 +190,4 @@ Lightweight & Deployable → Runs on MERN + Gemini (serverless friendly)
 
 📱 Cross-platform App (React Native)
 ```
-
----
-
-```
-📞 Contact
-
-Akhilesh Verma – 📧 av14021999@gmail.com
 ```
