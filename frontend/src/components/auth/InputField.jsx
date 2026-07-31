@@ -10,8 +10,8 @@ export const InputField = forwardRef(({ label, error, ...props }, ref) => {
         ref={ref}
         {...props}
         aria-invalid={isInvalid}
-        className={`w-full h-[55px] outline-none border-2 bg-black/40 backdrop-blur-sm text-white placeholder-gray-400 px-[20px] rounded-2xl text-[16px] transition-all duration-300
-        ${isInvalid ? 'border-red-500/80 focus:border-red-500' : 'border-white/10 focus:border-blue-400/80 hover:border-white/30'}`}
+        className={`w-full h-[50px] outline-none border bg-[var(--bg-elevated-2)] text-[var(--ink)] placeholder-[var(--ink-faint)] px-[20px] rounded-[var(--radius-md)] text-[15px] transition-all duration-300 font-body
+        ${isInvalid ? 'border-[var(--warn)] focus:border-[var(--warn)] focus:ring-1 focus:ring-[var(--warn)]' : 'border-[var(--bg-elevated-3)] focus:border-[var(--core)] focus:ring-1 focus:ring-[var(--core)] hover:border-[var(--ink-ghost)]'}`}
       />
       <AnimatePresence>
         {isInvalid && (

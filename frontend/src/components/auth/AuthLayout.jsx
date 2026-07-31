@@ -1,31 +1,33 @@
 import React from 'react';
-import bg from "../../assets/authBg.png";
-import { AuthIllustration } from './AuthIllustration';
 import { motion } from 'framer-motion';
+import AICore from '../AICore';
 
 export const AuthLayout = ({ children }) => {
   return (
-    <div 
-      className="w-full min-h-screen bg-cover bg-center bg-no-repeat flex items-center justify-center bg-[#030011]" 
-      style={{ backgroundImage: `url(${bg})` }}
-    >
-      <div className="w-full max-w-[1200px] h-screen lg:h-[700px] lg:rounded-3xl lg:border border-white/10 overflow-hidden flex bg-black/40 backdrop-blur-xl shadow-2xl">
-        
-        {/* Left Side: Illustration (Hidden on mobile) */}
-        <AuthIllustration />
+    <div className="w-full min-h-screen bg-[var(--bg-base)] flex items-center justify-center relative overflow-hidden ambient-preset-void">
+      {/* Background atmosphere */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="orb orb-1" />
+        <div className="orb orb-2" />
+        <div className="orb orb-3" />
+        <div className="grid-bg absolute inset-0" />
+      </div>
 
-        {/* Right Side: Form Container */}
-        <div className="w-full lg:w-[500px] flex-shrink-0 flex flex-col justify-center px-8 sm:px-12 py-10 relative">
-          <motion.div 
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5 }}
-            className="w-full max-w-[400px] mx-auto"
-          >
-            {children}
-          </motion.div>
+      <div className="w-full max-w-[420px] relative z-10">
+        <div className="flex flex-col items-center mb-8">
+          <AICore status="idle" size={80} accent="signal" />
+          <h1 className="text-2xl font-display font-semibold text-[var(--ink)] mt-6 tracking-tight">Virtual Assistant</h1>
+          <p className="text-[var(--ink-faint)] text-sm mt-1 font-mono uppercase tracking-widest">OS Authentication</p>
         </div>
-        
+
+        <motion.div 
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="bg-[var(--bg-elevated)] border border-[var(--bg-elevated-3)] rounded-[var(--radius-xl)] p-8 shadow-2xl backdrop-blur-md"
+        >
+          {children}
+        </motion.div>
       </div>
     </div>
   );

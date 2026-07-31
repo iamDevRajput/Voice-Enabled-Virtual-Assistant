@@ -4,15 +4,9 @@ import React, { createContext, useEffect, useState } from 'react'
 export const userDataContext=createContext()
 
 function UserContext({children}) {
-
     const serverUrl = import.meta.env.VITE_API_URL || "http://localhost:5001";
-
     const [userData,setUserData]=useState(null)
     const [authLoading, setAuthLoading] = useState(true)
-
-    const [frontendImage,setFrontendImage]=useState(null)
-    const [backendImage,setBackendImage]=useState(null) // yo img aayegi jo backend me store karayenge
-    const [selectedImage,setSelectedImage]=useState(null)
 
     // Function to fetch current logged-in user data from backend
     const handleCurrentUser=async ()=>{
@@ -28,13 +22,9 @@ function UserContext({children}) {
     }
 
   const getGeminiResponse=async (command)=>{
-
     try {
-
       const result=await axios.post(`${serverUrl}/api/user/asktoassistant`,{command},{withCredentials:true})
-
       return result.data
-
     } catch (error) {
       console.log(error)
       return {
@@ -47,13 +37,11 @@ function UserContext({children}) {
 
   // useEffect → runs once when the component loads
   // We call handleCurrentUser() inside it to fetch the user automatically on page load
-
   useEffect(()=>{
     handleCurrentUser()
   }, []) // empty dependency → runs only 1 time (like componentDidMount)
 
-  const value={ serverUrl,userData,setUserData,backendImage,setBackendImage,frontendImage,setFrontendImage,
-    selectedImage,setSelectedImage,getGeminiResponse, authLoading }
+  const value={ serverUrl,userData,setUserData,getGeminiResponse, authLoading }
 
   return (
     <div>

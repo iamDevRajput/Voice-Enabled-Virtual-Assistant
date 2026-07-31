@@ -24,39 +24,37 @@ export const getCurrentUser = async (req, res) => {
 // do cheeze update karna hai assistant name and assistant name
 
 export const updateAssistant = async (req, res) => {
-
   try {
-
-    // assistantName : name of assistant , imageUrl : url of selectedImage (send from frontend by user)
-    const { assistantName, imageUrl } = req.body;
-
-    let assistantImage;
-
-    if (req.file) {
-      assistantImage = await uploadOnCloudinary(req.file.path);
-    } else {
-      // ❌ If no file was uploaded,
-      // then just use the existing image URL instead
-      assistantImage = imageUrl;
-    }
-    // ab assistantName : name of assistant , imageUrl : url of selectedImage dono aa chuka hai , ab hum current user ko update kar denge
+    const { 
+      assistantName, 
+      coreTheme, 
+      personalityMode, 
+      voiceId, 
+      glowIntensity, 
+      motionIntensity, 
+      ambientPreset 
+    } = req.body;
 
     const user = await User.findByIdAndUpdate(
       req.userId,
       {
         assistantName,
-        assistantImage,
+        coreTheme,
+        personalityMode,
+        voiceId,
+        glowIntensity,
+        motionIntensity,
+        ambientPreset
       },
       { new: true }
     ).select("-password");
-    // {new: true} means : jo bhi user return ho yo new details ke saath return ho
 
     return res.status(200).json(user);
-
   } catch (error) {
     return res.status(400).json({ message: "updateAssistantError user error" });
   }
 };
+
 
 // ab updateAssistant ke liye route bana lete hai goto : backend/routes/user.routes.js
 

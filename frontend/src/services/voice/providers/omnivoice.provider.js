@@ -34,10 +34,7 @@ class OmniVoiceProvider {
 
     return new Promise(async (resolve, reject) => {
       try {
-        const imgUrl = options.avatarImage || '';
-        const isMale = imgUrl.includes('image2') || imgUrl.includes('image3');
-        // Example logic to map avatar to voice IDs available in OmniVoice
-        const voiceId = isMale ? 'male_voice_id' : 'female_voice_id'; 
+        const voiceId = options.voiceId || 'female_1'; // Use passed voiceId or default
         
         const response = await fetch(`${this.baseUrl}/v1/audio/speech`, {
           method: 'POST',

@@ -9,11 +9,10 @@ class BrowserProvider {
     return !!window.speechSynthesis;
   }
 
-  getVoiceForAvatar(voices, avatarImage) {
-    const imgUrl = avatarImage || '';
-    const isMaleAvatar = imgUrl.includes('image2') || imgUrl.includes('image3');
+  getVoiceForId(voices, voiceId) {
+    const isMale = voiceId && voiceId.toLowerCase().includes('male');
 
-    if (isMaleAvatar) {
+    if (isMale) {
       return (
         voices.find(v => v.name === 'Google UK English Male') ||
         voices.find(v => v.name === 'Microsoft David - English (United States)') ||
@@ -48,10 +47,10 @@ class BrowserProvider {
         this.activeUtterance = utterance;
 
         const voices = this.synth.getVoices();
-        const imgUrl = options.avatarImage || '';
-        const isMale = imgUrl.includes('image2') || imgUrl.includes('image3');
+        const voiceId = options.voiceId || '';
+        const isMale = voiceId.toLowerCase().includes('male');
         
-        const voice = this.getVoiceForAvatar(voices, imgUrl);
+        const voice = this.getVoiceForId(voices, voiceId);
         if (voice) utterance.voice = voice;
         utterance.lang = voice?.lang || 'en-US';
         utterance.rate = 0.92;
