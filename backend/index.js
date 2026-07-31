@@ -29,10 +29,11 @@ app.use(cors({
         const allowedOrigins = [
             process.env.FRONTEND_URL,
             "https://virtualassistant-03vg.onrender.com",
-            "https://voice-enabled-virtual-assistant.vercel.app"
+            "https://voice-enabled-virtual-assistant.vercel.app",
+            "https://voice-enabled-virtual-assistant-production.up.railway.app"
         ];
-        // Allow any localhost port, vercel apps, or specific allowed origins
-        if (!origin || /^http:\/\/localhost:\d+$/.test(origin) || /^https:\/\/.*\.vercel\.app$/.test(origin) || allowedOrigins.includes(origin)) {
+        // Allow any localhost port, vercel apps, railway apps, or specific allowed origins
+        if (!origin || /^http:\/\/localhost:\d+$/.test(origin) || /^https:\/\/.*\.vercel\.app$/.test(origin) || /^https:\/\/.*\.up\.railway\.app$/.test(origin) || allowedOrigins.includes(origin)) {
             callback(null, true);
         } else {
             callback(new Error('Not allowed by CORS'));
